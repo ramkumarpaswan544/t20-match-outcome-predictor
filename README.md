@@ -26,7 +26,7 @@ $$R_B' = R_B + K \cdot (S_B - E_B)$$
 
 Where:
 
-- $S_A \in \{1.0, 0.5, 0.0\}$ denotes a win, tie/no-result, or loss for Team A, and $S_B = 1 - S_A$.
+- $S_A \in \lbrace 1.0, 0.5, 0.0 \rbrace$ denotes a win, tie/no-result, or loss for Team A, and $S_B = 1 - S_A$.
 - $E_A$ and $E_B$ are the pre-match expected win probabilities ($E_A + E_B = 1$).
 - $K = 32$ is the tournament weight multiplier controlling update sensitivity.
 - The expected score uses the home-adjusted ratings, but the change is applied to the base ratings.
@@ -55,31 +55,38 @@ Running `python t20_predictor.py` prints:
 
 Fixture: Australia vs India [Home (Australia)]
   Pre-match Win Odds: Australia 44.3% | India 55.7%
-  Result: Australia won
-  Updated Strength Index: Australia -> 1697.8 (+17.8) | India -> 1732.2 (-17.8)
+  Recorded Outcome: Australia
+  Updated Strength: Australia -> 1697.8 (+17.8) | India -> 1732.2 (-17.8)
 
 Fixture: New Zealand vs England [Home (New Zealand)]
   Pre-match Win Odds: New Zealand 55.7% | England 44.3%
-  Result: New Zealand won
-  Updated Strength Index: New Zealand -> 1664.2 (+14.2) | England -> 1625.8 (-14.2)
+  Recorded Outcome: New Zealand
+  Updated Strength: New Zealand -> 1664.2 (+14.2) | England -> 1625.8 (-14.2)
 
 Fixture: South Africa vs India [Neutral (Australia)]
   Pre-match Win Odds: South Africa 33.1% | India 66.9%
-  Result: India won
-  Updated Strength Index: South Africa -> 1599.4 (-10.6) | India -> 1742.8 (+10.6)
+  Recorded Outcome: India
+  Updated Strength: South Africa -> 1599.4 (-10.6) | India -> 1742.8 (+10.6)
 
-=== UPDATED TOURNAMENT STANDINGS ===
+Fixture: England vs South Africa [Home (England)]
+  Pre-match Win Odds: England 58.0% | South Africa 42.0%
+  Recorded Outcome: Tie
+  Updated Strength: England -> 1623.2 (-2.6) | South Africa -> 1602.0 (+2.6)
+
+=== FINAL TOURNAMENT STANDINGS ===
 1. India          1742.8
 2. Australia      1697.8
 3. New Zealand    1664.2
-4. England        1625.8
-5. South Africa   1599.4
+4. England        1623.2
+5. South Africa   1602.0
 ```
+
+In the last fixture, a tie scores 0.5 for both teams. That is below what the favourite (England, 58%) was expected to score, so England loses a little rating and South Africa gains the same amount.
 
 ## Limitations
 
 - Starting ratings are synthetic placeholders, not estimated from data.
-- The home advantage (+30) and K-factor (32) are set by hand, not tuned.
+- The home advantage (`HOME_ADVANTAGE = 30`) and K-factor (`K_FACTOR = 32`) are set by hand, not tuned.
 - The model has not been backtested, so its predictive accuracy is unknown.
-- `update_ratings` supports ties (S = 0.5), but the demo fixtures only contain decisive results.
+- Ties and no-results are scored as 0.5 for both teams. The model does not estimate the probability of a tie itself.
 - Possible next steps: backtest on historical T20I results (log loss or Brier score) and tune K and the home advantage on that data.
