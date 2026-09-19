@@ -58,7 +58,8 @@ def simulate_tournament():
     fixtures = [
         ("Australia", "India", "Australia", "Australia"),
         ("New Zealand", "England", "New Zealand", "New Zealand"),
-        ("South Africa", "India", "Australia", "India")
+        ("South Africa", "India", "Australia", "India"),
+        ("England", "South Africa", "England", "Tie")
     ]
 
     print("=== T20 MATCH PREDICTIONS & DYNAMIC RATING UPDATES ===\n")
@@ -77,13 +78,15 @@ def simulate_tournament():
         print(f"  Pre-match Win Odds: {team_a} {prob_a * 100:.1f}% | {team_b} {prob_b * 100:.1f}%")
         print(f"  Recorded Outcome: {outcome}")
 
-        # Handle Win, Tie / No Result, and Loss accurately
+        # Handle Win, Tie / No Result, and Loss; reject unrecognised outcomes
         if outcome == team_a:
             score_a = 1.0
+        elif outcome == team_b:
+            score_a = 0.0
         elif outcome in ("Tie", "No Result"):
             score_a = 0.5
         else:
-            score_a = 0.0
+            raise ValueError(f"Unknown outcome '{outcome}' for {team_a} vs {team_b}")
 
         new_r_a, new_r_b = update_ratings(r_a, r_b, score_a, is_home_a=is_home_a, is_home_b=is_home_b)
 
